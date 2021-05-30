@@ -5,20 +5,26 @@
 
   <title>Netlify CMS Development Test</title>
   <script>
+  var locales = ['en', 'fr'];
   window.repoFiles = {
-    _posts: {
-      "2015-02-14-this-is-a-post.md": {
-        content: "---\ntitle: This is a YAML front matter post\nimage: /nf-logo.png\ndate: 2015-02-14T00:00:00.000Z\n---\n\n# I Am a Title in Markdown\n\nHello, world\n\n* One Thing\n* Another Thing\n* A Third Thing\n"
-      },
-      "2015-02-15-this-is-a-json-frontmatter-post.md": {
-        content: "{\n\"title\": \"This is a JSON front matter post\",\n\"image\": \"/nf-logo.png\",\n\"date\": \"2015-02-15T00:00:00.000Z\"\n}\n\n# I Am a Title in Markdown\n\nHello, world\n\n* One Thing\n* Another Thing\n* A Third Thing\n"
-      },
-      "2015-02-16-this-is-a-toml-frontmatter-post.md": {
-        content: "+++\ntitle = \"This is a TOML front matter post\"\nimage = \"/nf-logo.png\"\n\"date\" = \"2015-02-16T00:00:00.000Z\"\n+++\n\n# I Am a Title in Markdown\n\nHello, world\n\n* One Thing\n* Another Thing\n* A Third Thing\n"
-      },
-      "2015-02-14-this-is-a-post-with-a-different-extension.other": {
-        content: "---\ntitle: This post should not appear because the extension is different\nimage: /nf-logo.png\ndate: 2015-02-14T00:00:00.000Z\n---\n\n# I Am a Title in Markdown\n\nHello, world\n\n* One Thing\n* Another Thing\n* A Third Thing\n"
+    [`${locales[0]}`]: {
+      _posts: {
+        "2015-02-14-this-is-a-post.md": {
+          content: "---\ntitle: This is a YAML front matter post\nimage: /nf-logo.png\ndate: 2015-02-14T00:00:00.000Z\n---\n\n# I Am a Title in Markdown\n\nHello, world\n\n* One Thing\n* Another Thing\n* A Third Thing\n"
+        },
+        "2015-02-15-this-is-a-json-frontmatter-post.md": {
+          content: "{\n\"title\": \"This is a JSON front matter post\",\n\"image\": \"/nf-logo.png\",\n\"date\": \"2015-02-15T00:00:00.000Z\"\n}\n\n# I Am a Title in Markdown\n\nHello, world\n\n* One Thing\n* Another Thing\n* A Third Thing\n"
+        },
+        "2015-02-16-this-is-a-toml-frontmatter-post.md": {
+          content: "+++\ntitle = \"This is a TOML front matter post\"\nimage = \"/nf-logo.png\"\n\"date\" = \"2015-02-16T00:00:00.000Z\"\n+++\n\n# I Am a Title in Markdown\n\nHello, world\n\n* One Thing\n* Another Thing\n* A Third Thing\n"
+        },
+        "2015-02-14-this-is-a-post-with-a-different-extension.other": {
+          content: "---\ntitle: This post should not appear because the extension is different\nimage: /nf-logo.png\ndate: 2015-02-14T00:00:00.000Z\n---\n\n# I Am a Title in Markdown\n\nHello, world\n\n* One Thing\n* Another Thing\n* A Third Thing\n"
+        }
       }
+    },
+    [`${locales[1]}`]: {
+      _posts: {}
     },
     _faqs: {
       "what-is-netlify-cms.md": {
@@ -60,9 +66,15 @@
     var dateString = '' + date.getFullYear() + '-' + month + '-' + day;
     var slug = dateString + "-post-number-" + i + ".md";
 
-    window.repoFiles._posts[slug] = {
-      content: "---\ntitle: \"This is post # " + i + `\"\ndraft: ${i % 2 === 0}` + "\ndate: " + dateString + "T00:00:00.000Z\n---\n\n# The post is number " + i + "\n\nAnd this is yet another identical post body"
-    }
+    locales.forEach((lang) => {
+      var postTitle = (lang === 'en' ? 'This is post' : 'Ceci est l\'article');
+      var postHeading = (lang === 'en' ? 'The post is number' : 'Cet article est numéro');
+      var postContent = (lang === 'en' ? 'And this is yet another identical post body' : 'Et ceci est une fois de plus un corps de texte identique');
+      
+      window.repoFiles[lang]._posts[slug] = {
+        content: "---\ntitle: \""+postTitle+" # " + i + `\"\ndraft: ${i % 2 === 0}` + "\ndate: " + dateString + "T00:00:00.000Z\n---\n\n# "+postHeading+" " + i + "\n\n"+postContent
+      }
+    })
   }
 
   for (var i=1; i<=5; i++) {

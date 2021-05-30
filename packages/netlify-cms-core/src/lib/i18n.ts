@@ -7,6 +7,7 @@ import { EntryValue } from '../valueObjects/Entry';
 export const I18N = 'i18n';
 
 export enum I18N_STRUCTURE {
+  LOCALE_FOLDERS = 'locale_folders',
   MULTIPLE_FOLDERS = 'multiple_folders',
   MULTIPLE_FILES = 'multiple_files',
   SINGLE_FILE = 'single_file',
@@ -76,6 +77,8 @@ export function getFilePath(
   locale: string,
 ) {
   switch (structure) {
+    case I18N_STRUCTURE.LOCALE_FOLDERS:
+      return `${locale}/${path.trim()}`;
     case I18N_STRUCTURE.MULTIPLE_FOLDERS:
       return path.replace(`/${slug}`, `/${locale}/${slug}`);
     case I18N_STRUCTURE.MULTIPLE_FILES:
@@ -88,6 +91,11 @@ export function getFilePath(
 
 export function getLocaleFromPath(structure: I18N_STRUCTURE, extension: string, path: string) {
   switch (structure) {
+    case I18N_STRUCTURE.LOCALE_FOLDERS: {
+      const parts = path.split('/');
+      // locale
+      return parts.shift();
+    }
     case I18N_STRUCTURE.MULTIPLE_FOLDERS: {
       const parts = path.split('/');
       // filename
@@ -329,6 +337,7 @@ export function getI18nDataFiles(
     return diffFiles;
   }
   const paths = getFilePaths(collection, extension, path, slug);
+  console.log(paths);
   const dataFiles = paths.reduce((acc, path) => {
     const dataFile = diffFiles.find(file => file.path === path);
     if (dataFile) {

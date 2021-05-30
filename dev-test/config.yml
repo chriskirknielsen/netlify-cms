@@ -13,6 +13,10 @@ collections: # A list of collections the CMS should be able to edit
     description: >
       The description is a great place for tone setting, high level information, and editing
       guidelines that are specific to a collection.
+    i18n:
+      structure: locale_folders
+      locales: [en, fr]
+      default_locale: en
     folder: '_posts'
     slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
     summary: '{{title}} -- {{year}}/{{month}}/{{day}}'
@@ -34,8 +38,8 @@ collections: # A list of collections the CMS should be able to edit
       - label: Drafts
         field: draft
     fields: # The fields each document in this collection have
-      - { label: 'Title', name: 'title', widget: 'string', tagname: 'h1' }
-      - { label: 'Draft', name: 'draft', widget: 'boolean', default: false }
+      - { label: 'Title', name: 'title', widget: 'string', tagname: 'h1', i18n: true }
+      - { label: 'Draft', name: 'draft', widget: 'boolean', default: false, i18n: duplicate }
       - {
           label: 'Publish Date',
           name: 'date',
@@ -43,14 +47,17 @@ collections: # A list of collections the CMS should be able to edit
           date_format: 'YYYY-MM-DD',
           time_format: 'HH:mm',
           format: 'YYYY-MM-DD HH:mm',
+          i18n: duplicate
         }
-      - label: 'Cover Image'
-        name: 'image'
-        widget: 'image'
-        required: false
-        tagname: ''
-
-      - { label: 'Body', name: 'body', widget: 'markdown', hint: 'Main content goes here.' }
+      - {
+          label: 'Cover Image',
+          name: 'image',
+          widget: 'image',
+          required: false,
+          tagname: '',
+          i18n: duplicate
+        }
+      - { label: 'Body', name: 'body', widget: 'markdown', hint: 'Main content goes here.', i18n: true }
 
   - name: 'faq' # Used in routes, ie.: /admin/collections/:slug/edit
     label: 'FAQ' # Used in the UI
