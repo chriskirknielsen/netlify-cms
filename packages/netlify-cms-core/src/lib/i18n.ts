@@ -337,7 +337,6 @@ export function getI18nDataFiles(
     return diffFiles;
   }
   const paths = getFilePaths(collection, extension, path, slug);
-  console.log(paths);
   const dataFiles = paths.reduce((acc, path) => {
     const dataFile = diffFiles.find(file => file.path === path);
     if (dataFile) {
