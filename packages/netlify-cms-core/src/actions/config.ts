@@ -254,7 +254,7 @@ export function applyDefaults(originalConfig: CmsConfig) {
         collection[I18N] = collectionI18n;
       } else {
         collectionI18n = undefined;
-        delete collection[I18N];
+        // delete collection[I18N];
       }
 
       if (collection.fields) {
