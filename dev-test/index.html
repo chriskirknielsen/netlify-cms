@@ -7,6 +7,11 @@
   <script>
   var locales = ['en', 'fr'];
   window.repoFiles = {
+    _posts: {
+      "2015-02-14-test-is-a-post.md": {
+          content: "---\ntitle: TEST post\nimage: /nf-logo.png\ndate: 2015-02-14T00:00:00.000Z\n---\n\n# I Am a Title in Markdown\n\nHello, world\n\n* One Thing\n* Another Thing\n* A Third Thing\n"
+        },
+    },
     [`${locales[0]}`]: {
       _posts: {
         "2015-02-14-this-is-a-post.md": {
@@ -22,9 +27,6 @@
           content: "---\ntitle: This post should not appear because the extension is different\nimage: /nf-logo.png\ndate: 2015-02-14T00:00:00.000Z\n---\n\n# I Am a Title in Markdown\n\nHello, world\n\n* One Thing\n* Another Thing\n* A Third Thing\n"
         }
       }
-    },
-    [`${locales[1]}`]: {
-      _posts: {}
     },
     _faqs: {
       "what-is-netlify-cms.md": {
@@ -54,6 +56,16 @@
       }
     }
   }
+
+  // Add entry for remaining locales
+  locales.forEach((lang) => {
+    if (lang === locales[0]) { return; } // Default locale is handled
+
+    // Init empty posts list
+    window.repoFiles[`${lang}`] = {
+      _posts: {}
+    };
+  });
 
   var ONE_DAY = 60 * 60 * 24 * 1000;
 
