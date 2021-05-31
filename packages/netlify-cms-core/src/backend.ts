@@ -493,6 +493,12 @@ export class Backend {
   }
 
   async listEntries(collection: Collection) {
+    const hasI18n = collection.get('i18n');
+    const i18nStructure = (hasI18n ? hasI18n.get('structure') : '');
+    const localeRoot = (i18nStructure === 'locale_folders');
+    const i18nLocales = (hasI18n && localeRoot ? hasI18n.get('locales')._tail.array : []); // Provide locale prefixes for the path if using locale_folders
+    // TODO: Figure out the correct way to get that data instead of _tail.array…
+
     const extension = selectFolderEntryExtension(collection);
     let listMethod: () => Promise<ImplementationEntry[]>;
     const collectionType = collection.get('type');
@@ -503,6 +509,7 @@ export class Backend {
           collection.get('folder') as string,
           extension,
           depth,
+          i18nLocales
         );
       };
     } else if (collectionType === FILES) {
@@ -542,11 +549,17 @@ export class Backend {
   // returns all the collected entries. Used to retrieve all entries
   // for local searches and queries.
   async listAllEntries(collection: Collection) {
+    const hasI18n = collection.get('i18n');
+    const i18nStructure = (hasI18n ? hasI18n.get('structure') : '');
+    const localeRoot = (i18nStructure === 'locale_folders');
+    const i18nLocales: string[] = (hasI18n && localeRoot ? hasI18n.get('locales')._tail.array : []);
+    // TODO: Figure out the correct way to get that data instead of _tail.array…
+
     if (collection.get('folder') && this.implementation.allEntriesByFolder) {
       const depth = collectionDepth(collection);
       const extension = selectFolderEntryExtension(collection);
       return this.implementation
-        .allEntriesByFolder(collection.get('folder') as string, extension, depth)
+        .allEntriesByFolder(collection.get('folder') as string, extension, depth, i18nLocales)
         .then(entries => this.processEntries(entries, collection));
     }
 
