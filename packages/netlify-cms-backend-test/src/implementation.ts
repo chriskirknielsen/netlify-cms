@@ -191,13 +191,8 @@ export default class TestBackend implements Implementation {
     return Promise.resolve({ entries, cursor: newCursor });
   }
 
-  entriesByFolder(folder: string, extension: string, depth: number, locales: string[]) {
-    const hasPrefixLocales = (locales.length > 0);
-    if (hasPrefixLocales) { depth++; }
-    const files = folder ? (hasPrefixLocales
-      ? [].concat(...locales.map(locale => getFolderFiles(window.repoFiles, locale, extension, depth, undefined, folder)))
-      : getFolderFiles(window.repoFiles, folder, extension, depth)
-    ) : []; console.log('EBF', files);
+  entriesByFolder(folder: string, extension: string, depth: number) {
+    const files = folder ? getFolderFiles(window.repoFiles, folder, extension, depth) : [];
     const entries = files.map(f => ({
       data: f.content as string,
       file: { path: f.path, id: f.path },
