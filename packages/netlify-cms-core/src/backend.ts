@@ -494,38 +494,20 @@ export class Backend {
   }
 
   async listEntries(collection: Collection) {
-    const collectionI18n = getI18nInfo(collection);
-    const hasI18n = (Object.keys(collectionI18n).length > 0);
-    const i18nStructure = (hasI18n ? collectionI18n.structure : '');
-    const isLocaleRoot = (i18nStructure === 'locale_folders');
-    const localeRoots = (hasI18n && isLocaleRoot ? collectionI18n.locales as string[] : []).filter(Boolean);
-
     const extension = selectFolderEntryExtension(collection);
     let listMethod: () => Promise<ImplementationEntry[]>;
     const collectionType = collection.get('type');
     if (collectionType === FOLDER) {
       listMethod = () => {
         const depth = collectionDepth(collection);
+        const collectionI18nInfo = getI18nInfo(collection);
+        const isI18nCollection = (Object.keys(collectionI18nInfo).length > 0);
+        const i18nStructure = (isI18nCollection ? collectionI18nInfo.structure : '');
+        const isLocaleRoot = (i18nStructure === 'locale_folders');
+        const defaultLocaleRoot = (isI18nCollection && isLocaleRoot ? collectionI18nInfo.defaultLocale as string : '');
+        const folder = (defaultLocaleRoot ? `${defaultLocaleRoot}/${collection.get('folder')}` : collection.get('folder'));
 
-        if (isLocaleRoot && localeRoots.length > 0) {
-          let entriesByLocale = [];
-          localeRoots.forEach((locale) => {
-            const entriesForLocale = this.implementation.entriesByFolder(
-              `${locale}/${collection.get('folder')}`,
-              extension,
-              depth,
-            );
-            entriesByLocale.push(entriesForLocale);
-          });
-
-          return Promise.all(entriesByLocale).then(entries => [].concat(...entries));
-        }
-
-        return this.implementation.entriesByFolder(
-          collection.get('folder') as string,
-          extension,
-          depth,
-        );
+        return this.implementation.entriesByFolder(folder as string, extension, depth);
       };
     } else if (collectionType === FILES) {
       const files = collection
@@ -564,30 +546,18 @@ export class Backend {
   // returns all the collected entries. Used to retrieve all entries
   // for local searches and queries.
   async listAllEntries(collection: Collection) {
-    const collectionI18n = getI18nInfo(collection);
-    const hasI18n = (Object.keys(collectionI18n).length > 0);
-    const i18nStructure = (hasI18n ? collectionI18n.structure : '');
-    const isLocaleRoot = (i18nStructure === 'locale_folders');
-    const localeRoots = (hasI18n && isLocaleRoot ? collectionI18n.locales as string[] : []).filter(Boolean);
-
     if (collection.get('folder') && this.implementation.allEntriesByFolder) {
       const depth = collectionDepth(collection);
       const extension = selectFolderEntryExtension(collection);
-
-      if (isLocaleRoot && localeRoots.length > 0) {
-        let entriesByLocale = [];
-        localeRoots.forEach((locale) => {
-          const entriesForLocale = this.implementation
-            .allEntriesByFolder(`${locale}/${collection.get('folder')}`, extension, depth)
-            .then(entries => this.processEntries(entries, collection)) as EntryValue[];
-          entriesByLocale.push(entriesForLocale);
-        });
-        
-        return Promise.all(entriesByLocale).then(entries => [].concat(...entries));
-      }
+      const collectionI18nInfo = getI18nInfo(collection);
+      const isI18nCollection = (Object.keys(collectionI18nInfo).length > 0);
+      const i18nStructure = (isI18nCollection ? collectionI18nInfo.structure : '');
+      const isLocaleRoot = (i18nStructure === 'locale_folders');
+      const defaultLocaleRoot = (isI18nCollection && isLocaleRoot ? collectionI18nInfo.defaultLocale as string : '');
+      const folder = (defaultLocaleRoot ? `${defaultLocaleRoot}/${collection.get('folder')}` : collection.get('folder'));
 
       return this.implementation
-        .allEntriesByFolder(collection.get('folder') as string, extension, depth)
+        .allEntriesByFolder(folder as string, extension, depth)
         .then(entries => this.processEntries(entries, collection));
     }
 
