@@ -39,10 +39,15 @@ export function getI18nInfo(collection: Collection) {
 
 export function getI18nFilesDepth(collection: Collection, depth: number) {
   const { structure } = getI18nInfo(collection) as I18nInfo;
-  if (structure === I18N_STRUCTURE.MULTIPLE_FOLDERS) {
-    return depth + 1;
+  switch (structure) {
+    case I18N_STRUCTURE.MULTIPLE_FOLDERS:
+    case I18N_STRUCTURE.LOCALE_FOLDERS: {
+      return depth + 1;
+    }
+    default: {
+      return depth;
+    }
   }
-  return depth;
 }
 
 export function isFieldTranslatable(field: EntryField, locale: string, defaultLocale: string) {
@@ -129,6 +134,7 @@ export function getFilePaths(
 
 export function normalizeFilePath(structure: I18N_STRUCTURE, path: string, locale: string) {
   switch (structure) {
+    case I18N_STRUCTURE.LOCALE_FOLDERS:
     case I18N_STRUCTURE.MULTIPLE_FOLDERS:
       return path.replace(`${locale}/`, '');
     case I18N_STRUCTURE.MULTIPLE_FILES:
