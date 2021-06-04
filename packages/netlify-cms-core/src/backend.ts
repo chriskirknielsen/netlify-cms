@@ -504,7 +504,7 @@ export class Backend {
         const isI18nCollection = (Object.keys(collectionI18nInfo).length > 0);
         const i18nStructure = (isI18nCollection ? collectionI18nInfo.structure : '');
         const isLocaleRoot = (i18nStructure === 'locale_folders');
-        const defaultLocaleRoot = (isI18nCollection && isLocaleRoot ? collectionI18nInfo.defaultLocale as string : '');
+        const defaultLocaleRoot = (isI18nCollection && isLocaleRoot ? collectionI18nInfo.defaultLocale : '');
         const folder = (defaultLocaleRoot ? `${defaultLocaleRoot}/${collection.get('folder')}` : collection.get('folder'));
 
         return this.implementation.entriesByFolder(folder as string, extension, depth);
