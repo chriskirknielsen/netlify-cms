@@ -29,7 +29,7 @@ type I18nInfo = {
   structure: I18N_STRUCTURE;
 };
 
-export function getI18nInfo(collection: Collection) {
+export function getI18nInfo(collection: Collection): Partial<I18nInfo> {
   if (!hasI18n(collection)) {
     return {};
   }
@@ -48,6 +48,17 @@ export function getI18nFilesDepth(collection: Collection, depth: number) {
       return depth;
     }
   }
+}
+
+/* Do we need to inject the locale at the top level of the content path? */
+function hasTopLevelLocale(collection: Collection) {
+  return hasI18n(collection) && getI18nInfo(collection).structure === I18N_STRUCTURE.LOCALE_FOLDERS;
+}
+
+export function getPathWithI18n(collection: Collection) {
+  return hasTopLevelLocale(collection)
+    ? `${getI18nInfo(collection)?.defaultLocale || ''}/${collection.get('folder')}`
+    : (collection.get('folder') as string);
 }
 
 export function isFieldTranslatable(field: EntryField, locale: string, defaultLocale: string) {

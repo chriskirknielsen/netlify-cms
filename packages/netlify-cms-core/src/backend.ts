@@ -59,7 +59,6 @@ import { selectCustomPath } from './reducers/entryDraft';
 import {
   getI18nFilesDepth,
   getI18nFiles,
-  getI18nInfo,
   hasI18n,
   getFilePaths,
   getI18nEntry,
@@ -67,6 +66,7 @@ import {
   getI18nDataFiles,
   getI18nBackup,
   formatI18nBackup,
+  getPathWithI18n,
 } from './lib/i18n';
 
 const { extractTemplateVars, dateParsers, expandPath } = stringTemplate;
@@ -500,12 +500,7 @@ export class Backend {
     if (collectionType === FOLDER) {
       listMethod = () => {
         const depth = collectionDepth(collection);
-        const collectionI18nInfo = getI18nInfo(collection);
-        const isI18nCollection = (Object.keys(collectionI18nInfo).length > 0);
-        const i18nStructure = (isI18nCollection ? collectionI18nInfo.structure : '');
-        const isLocaleRoot = (i18nStructure === 'locale_folders');
-        const defaultLocaleRoot = (isI18nCollection && isLocaleRoot ? collectionI18nInfo.defaultLocale : '');
-        const folder = (defaultLocaleRoot ? `${defaultLocaleRoot}/${collection.get('folder')}` : collection.get('folder'));
+        const folder = getPathWithI18n(collection);
 
         return this.implementation.entriesByFolder(folder as string, extension, depth);
       };
@@ -549,12 +544,7 @@ export class Backend {
     if (collection.get('folder') && this.implementation.allEntriesByFolder) {
       const depth = collectionDepth(collection);
       const extension = selectFolderEntryExtension(collection);
-      const collectionI18nInfo = getI18nInfo(collection);
-      const isI18nCollection = (Object.keys(collectionI18nInfo).length > 0);
-      const i18nStructure = (isI18nCollection ? collectionI18nInfo.structure : '');
-      const isLocaleRoot = (i18nStructure === 'locale_folders');
-      const defaultLocaleRoot = (isI18nCollection && isLocaleRoot ? collectionI18nInfo.defaultLocale as string : '');
-      const folder = (defaultLocaleRoot ? `${defaultLocaleRoot}/${collection.get('folder')}` : collection.get('folder'));
+      const folder = getPathWithI18n(collection);
 
       return this.implementation
         .allEntriesByFolder(folder as string, extension, depth)
