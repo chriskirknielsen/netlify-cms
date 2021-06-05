@@ -105,6 +105,13 @@ export function getFolderFiles(
     return files;
   }
 
+  // If nested, get files from the subfolder
+  if (folder.indexOf('/') > -1) {
+    const folderPath = folder.split('/');
+    folder = folderPath[0];
+    path = folderPath[1];
+  }
+
   Object.keys(tree[folder] || {}).forEach(key => {
     if (extname(key)) {
       const file = (tree[folder] as RepoTree)[key] as RepoFile;
